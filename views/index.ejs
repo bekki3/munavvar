@@ -58,6 +58,17 @@
             color: rgb(219, 219, 219);
             font-size: 16px;
         }
+        #plusButton{
+            padding: 8px 12px;
+            border: 0;
+            box-sizing: border-box;
+            border-radius: 0px;
+            background-color: #29622b; /* Green */
+            color: rgb(219, 219, 219);
+            font-size: 16px;
+            outline: none;
+            border: 0;
+        }
         #displayContainer {
             width: 60%;
             background-color: #141414;
@@ -74,6 +85,7 @@
         video {
             width: 100%;
         }
+       
     </style>
 </head>
 <body>
@@ -95,7 +107,10 @@
           <div id="display"></div>
       </div>
     </div>
-    <div id="buttonContainer"><button id="translateBtn">Tarjima qilish</button></div>
+    <div id="buttonContainer">
+        <button id="translateBtn">Tarjima qilish</button>
+        <button id="plusButton" onclick="window.location.href='/upload'">+</button>
+    </div>
     
 
 
@@ -107,8 +122,6 @@
 
 
             let words = transliterator.toLatin(inputField.value).split(' ');
-            // console.log(transliterator.textToCyrillic('dunyo davlat shahar'));
-            // console.log(words);
             display.innerHTML = '';
             let index = 0;
 
@@ -119,7 +132,7 @@
                 video.src = `videos/${words[index]}.mp4`;
                 video.playbackRate = 1.5; // Added this line
                 video.autoplay = true;
-                
+
                 video.onerror = function() {
                     let notFound = document.createElement('p');
                     notFound.textContent = `Bunaqa suz yo'q: ${words[index]}`;

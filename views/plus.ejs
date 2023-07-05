@@ -2,18 +2,102 @@
 <html>
 
 <head>
-  <title>Webcam Recorder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasvirga Olish</title>
 </head>
 
 <body>
-  <h1>Webcam Recorder</h1>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #212121;
+    }
+    #titleText {
+            margin: 0;
+            text-align: left;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #141414;
+            color: white;
+        }
+        #container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        #inputContainer {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #videoNameInput {
+            outline: none;
+            background-color: #c5c5c5;
+            color: rgb(54, 54, 54);
+            width: 30%;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 0;
+            border-radius: 0px;
+            height: 50px;
+            border-top: 1px solid #888;
+            border-right: 1px solid #888;
+            resize: none;
+            font-size: 20px;
+        }
+        #buttonContainer{
+            text-align: center;
+        }
+        #record{
+            width: 150px;
+            padding: 8px 20px;
+            border: 0;
+            box-sizing: border-box;
+            border-radius: 0px;
+            background-color: #29622b; /* Green */
+            color: rgb(219, 219, 219);
+            font-size: 16px;
+        }
+        #stop{
+            width: 150px;
+            padding: 8px 20px;
+            border: 0;
+            box-sizing: border-box;
+            border-radius: 0px;
+            background-color: #29622b; /* Green */
+            color: rgb(219, 219, 219);
+            font-size: 16px;
+        }
+        video {
+            width: 100%;
+        }
+        #playButtons{
+          text-align: center;
+        }
+  </style>
+
+  <h1 id="titleText">Tasvirga Olish</h1>
   <video id="webcam" width="640" height="480" autoplay></video>
-  <button id="record">Record</button>
-  <button id="stop">Stop</button>
+  <div id="inputContainer">
+    <input id="videoNameInput" type="text" placeholder="So'zni kiriting">
+  </div>
+  <div id="playButtons">
+    <button id="record">Record</button>
+    <button id="stop">Stop</button>
+  </div>
+
   <script>
     const webcam = document.querySelector('#webcam');
     const record = document.querySelector('#record');
     const stop = document.querySelector('#stop');
+    const videoName = document.querySelector("#videoNameInput");
     let mediaRecorder;
     let chunks = [];
 
@@ -27,7 +111,7 @@
             min: 360
           },
           aspectRatio: 16 / 9
-        }, 
+        },
         audio: true
       })
       .then(stream => {
@@ -41,15 +125,25 @@
           chunks = [];
           const formData = new FormData();
           formData.append('video', blob);
+          formData.append('data', "videoName.value");
           fetch('/upload', {
             method: 'POST',
-            body: formData
-          });
+            body: formData,
+            
+          })
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.error(error));;
         };
       });
 
     record.addEventListener('click', () => {
-      mediaRecorder.start();
+
+      if (videoName.value.length === 0) {
+        alert("So'zni kiriting!");
+      } else {
+        mediaRecorder.start();
+      }
     });
 
     stop.addEventListener('click', () => {

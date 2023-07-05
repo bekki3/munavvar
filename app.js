@@ -6,13 +6,13 @@ const ejs = require('ejs');
 const express = require('express');
 const multer = require('multer');
 const bodyParser = require('body-parser');
-
+let videoName = "salom"
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'public/videos/');
     },
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}.mp4`);
+      cb(null, `${videoName}.mp4`);
     }
   });
   const upload = multer({ storage });
@@ -39,6 +39,8 @@ app.get('/upload', (req, res)=> {
 })
 
 app.post('/upload', upload.single('video'), (req, res) => {
+    videoName = req.body.data;
+    console.log(videoName);
   res.sendStatus(200);
 });
 
