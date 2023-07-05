@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Munavvar Tarjimon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #212121;
+        }
+        #titleText {
+            margin: 0;
+            text-align: left;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #141414;
+            color: white;
+        }
+        #container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        #inputContainer {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #inputField {
+            outline: none;
+            background-color: #141414;
+            color: rgb(201, 201, 201);
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 0;
+            border-radius: 0px;
+            height: 300px;
+            border-top: 1px solid #888;
+            border-right: 1px solid #888;
+            resize: none;
+        }
+        #buttonContainer{
+            text-align: center;
+        }
+        #translateBtn {
+            width: 150px;
+            padding: 8px 20px;
+            border: 0;
+            box-sizing: border-box;
+            border-radius: 0px;
+            background-color: #29622b; /* Green */
+            color: rgb(219, 219, 219);
+            font-size: 16px;
+        }
+        #displayContainer {
+            width: 60%;
+            background-color: #141414;
+            border-top: 1px solid #888;
+        }
+        #display {
+            width: 100%;
+            height: 300px;
+        }
+        .notFound {
+            color: red;
+            font-weight: bold;
+        }
+        video {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://unpkg.com/lotin-kirill/dist-umd/index.min.js"></script>
+    <script>
+      const Transliterator = lotinKirill.default;
+      const transliterator = new Transliterator();
+    </script>
+
+    <h1 id="titleText">Munavvar Tarjimon</h1>
+
+    <div id="container">
+      <div id="inputContainer">
+        <textarea name="" id="inputField" placeholder="Lotin/Kirill"></textarea>
+          <!-- <input type="text" id="" placeholder="Enter text here"> -->
+      </div>
+
+      <div id="displayContainer">
+          <div id="display"></div>
+      </div>
+    </div>
+    <div id="buttonContainer"><button id="translateBtn">Tarjima qilish</button></div>
+    
+
+
+    <script>
+        let inputField = document.querySelector('#inputField');
+        let display = document.querySelector('#display');
+        let translateBtn = document.querySelector("#translateBtn");
+        translateBtn.addEventListener('click', function() {
+
+
+            let words = transliterator.toLatin(inputField.value).split(' ');
+            // console.log(transliterator.textToCyrillic('dunyo davlat shahar'));
+            // console.log(words);
+            display.innerHTML = '';
+            let index = 0;
+
+          function playNextVideo() {
+                if (index >= words.length) return;
+
+                let video = document.createElement('video');
+                video.src = `videos/${words[index]}.mp4`;
+                video.playbackRate = 1.5; // Added this line
+                video.autoplay = true;
+                
+                video.onerror = function() {
+                    let notFound = document.createElement('p');
+                    notFound.textContent = `Bunaqa suz yo'q: ${words[index]}`;
+                    notFound.classList.add('notFound');
+                    display.appendChild(notFound);
+                };
+
+                video.onended = function() {
+                    display.removeChild(video);
+                    index++;
+                    playNextVideo();
+                };
+
+                display.appendChild(video);
+          }
+
+          playNextVideo();
+      });
+    </script>
+</body>
+</html>

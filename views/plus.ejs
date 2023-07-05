@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Webcam Recorder</title>
+</head>
+
+<body>
+  <h1>Webcam Recorder</h1>
+  <video id="webcam" width="640" height="480" autoplay></video>
+  <button id="record">Record</button>
+  <button id="stop">Stop</button>
+  <script>
+    const webcam = document.querySelector('#webcam');
+    const record = document.querySelector('#record');
+    const stop = document.querySelector('#stop');
+    let mediaRecorder;
+    let chunks = [];
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          width: {
+            min: 640
+          },
+          height: {
+            min: 360
+          },
+          aspectRatio: 16 / 9
+        }, 
+        audio: true
+      })
+      .then(stream => {
+        webcam.srcObject = stream;
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => {
+          chunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/webm' });
+          chunks = [];
+          const formData = new FormData();
+          formData.append('video', blob);
+          fetch('/upload', {
+            method: 'POST',
+            body: formData
+          });
+        };
+      });
+
+    record.addEventListener('click', () => {
+      mediaRecorder.start();
+    });
+
+    stop.addEventListener('click', () => {
+      mediaRecorder.stop();
+    });
+  </script>
+</body>
+
+</html>
